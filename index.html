@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TravelMate V13 - Final</title>
+    <title>TravelMate V14 - FinLayout</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -37,7 +37,7 @@
             <p class="text-xs text-stone-400 mt-2 tracking-[0.2em] uppercase italic">Essence of Journey</p>
         </header>
         <div id="tripList" class="space-y-8"></div>
-        <button onclick="showCreateModal()" class="fixed bottom-10 right-8 btn-primary w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50 active:scale-90 transition-transform">
+        <button onclick="showCreateModal()" class="fixed bottom-10 right-8 btn-primary w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50">
             <i class="fas fa-plus"></i>
         </button>
     </div>
@@ -61,12 +61,8 @@
                 <button onclick="showAddSpotModal()" class="mt-14 w-full py-5 border-2 border-dashed border-stone-300 rounded-2xl text-stone-400 text-sm tracking-widest uppercase font-black">+ New Schedule</button>
             </div>
 
-            <div id="sub-wallet" class="view-content space-y-8">
-                <div class="p-10 rounded-[2.5rem] border border-stone-100 text-center bg-white">
-                    <p class="text-[10px] tracking-[0.2em] uppercase text-stone-400 mb-3 font-bold">Total Balance</p>
-                    <div id="totalExpense" class="text-5xl font-light italic text-stone-800">NT$ 0</div>
-                </div>
-                <div class="space-y-4 bg-white p-6 rounded-3xl border border-stone-50">
+            <div id="sub-wallet" class="view-content space-y-6">
+                <div class="space-y-4 bg-white p-6 rounded-3xl border border-stone-50 shadow-sm">
                     <div class="grid grid-cols-2 gap-3">
                         <input id="expAmount" type="number" placeholder="0.00">
                         <select id="expCurrency">
@@ -75,14 +71,20 @@
                             <option value="KRW">KRW</option>
                         </select>
                     </div>
-                    <input id="expNote" type="text" placeholder="Description">
+                    <input id="expNote" type="text" placeholder="Item name">
                     <button onclick="addExpense()" class="w-full btn-primary py-4 rounded-2xl text-sm font-black uppercase">Save Expense</button>
+                    
+                    <div class="pt-4 border-t border-stone-100 flex justify-between items-center px-2">
+                        <span class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Total Balance</span>
+                        <span id="totalExpense" class="text-xl font-serif italic font-bold text-stone-800">NT$ 0</span>
+                    </div>
                 </div>
-                <div id="expenseList" class="space-y-4"></div>
+
+                <div id="expenseList" class="space-y-3"></div>
             </div>
 
             <div id="sub-notes" class="view-content">
-                <textarea id="tripNotes" class="w-full h-[65vh] p-4 text-lg border-none focus:ring-0" placeholder="Hotel info, ticket codes..." oninput="saveAll()"></textarea>
+                <textarea id="tripNotes" class="w-full h-[65vh] p-4 text-lg border-none focus:ring-0" placeholder="Notes..." oninput="saveAll()"></textarea>
             </div>
         </main>
 
@@ -103,11 +105,11 @@
         <div class="bg-white w-full rounded-[2.5rem] p-10 space-y-6">
             <h3 class="text-lg font-bold uppercase tracking-widest text-center">New Journey</h3>
             <input id="newTripName" type="text" placeholder="Where to?">
-            <div class="space-y-4 text-left">
+            <div class="space-y-4">
                 <div class="flex flex-col"><label class="text-[10px] ml-2 text-stone-400 font-bold uppercase">Start</label><input id="newTripStart" type="date"></div>
                 <div class="flex flex-col"><label class="text-[10px] ml-2 text-stone-400 font-bold uppercase">End</label><input id="newTripEnd" type="date"></div>
             </div>
-            <button onclick="createNewTrip()" class="w-full btn-primary py-5 rounded-2xl text-sm font-black uppercase shadow-lg">Start</button>
+            <button onclick="createNewTrip()" class="w-full btn-primary py-5 rounded-2xl text-sm font-black uppercase">Start</button>
             <button onclick="hideCreateModal()" class="w-full text-stone-400 text-xs font-bold uppercase">Cancel</button>
         </div>
     </div>
@@ -115,7 +117,7 @@
     <div id="modal-add-spot" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-[101] flex items-center justify-center p-8">
         <div class="bg-white w-full rounded-[2.5rem] p-10 space-y-6">
             <h3 id="spotModalTitle" class="text-lg font-bold uppercase tracking-widest text-center">Add Spot</h3>
-            <div class="space-y-4 text-left">
+            <div class="space-y-4">
                 <div class="flex flex-col"><label class="text-[10px] ml-2 text-stone-400 font-bold uppercase">Time</label><input id="spotTime" type="time"></div>
                 <div class="flex flex-col"><label class="text-[10px] ml-2 text-stone-400 font-bold uppercase">Activity</label><input id="spotName" type="text" placeholder="Destination"></div>
             </div>
@@ -123,13 +125,13 @@
                 <button onclick="hideAddSpotModal()" class="flex-1 text-stone-400 text-sm font-bold uppercase">Cancel</button>
                 <button onclick="saveNewSpot()" id="btnSaveSpot" class="flex-1 btn-primary py-4 rounded-2xl text-sm font-black uppercase">Confirm</button>
             </div>
-            <button id="btnDeleteSpot" onclick="deleteSpot()" class="hidden w-full text-red-300 text-xs font-bold uppercase mt-2">Delete this activity</button>
+            <button id="btnDeleteSpot" onclick="deleteSpot()" class="hidden w-full text-red-300 text-xs font-bold uppercase mt-2">Delete</button>
         </div>
     </div>
 
     <script>
         const RATES = { TWD: 1, JPY: 0.21, EUR: 34.5, USD: 32.2, KRW: 0.024 };
-        let allTrips = JSON.parse(localStorage.getItem('TravelTiramisu_V13')) || [];
+        let allTrips = JSON.parse(localStorage.getItem('TravelTiramisu_V14')) || [];
         let currentTripIndex = null;
         let selectedDayIndex = 0;
         let editingSpotIndex = null;
@@ -138,32 +140,20 @@
             const list = document.getElementById('tripList');
             list.innerHTML = allTrips.length === 0 ? '<p class="text-center text-stone-300 py-32 text-sm tracking-[0.2em]">EMPTY JOURNEY</p>' : 
             allTrips.map((t, i) => `
-                <div onclick="showDetail(${i})" class="bg-white p-8 rounded-[2rem] shadow-sm flex justify-between items-center border border-stone-50 active:scale-95 transition-transform">
+                <div onclick="showDetail(${i})" class="bg-white p-8 rounded-[2rem] shadow-sm flex justify-between items-center border border-stone-50 active:scale-95 transition-all">
                     <div class="flex items-center gap-6">
                         <div class="w-14 h-14 bg-stone-100 rounded-2xl flex items-center justify-center text-stone-400 font-serif text-2xl font-bold">${t.name[0]}</div>
-                        <div><h3 class="font-black text-xl text-stone-800">${t.name}</h3><p class="text-xs text-stone-400 font-mono mt-1 uppercase">${t.start} — ${t.end}</p></div>
+                        <div><h3 class="font-black text-xl text-stone-800">${t.name}</h3><p class="text-xs text-stone-400 font-mono mt-1">${t.start} — ${t.end}</p></div>
                     </div>
                     <i class="fas fa-chevron-right text-stone-200"></i>
                 </div>
             `).join('');
         }
 
-        function createNewTrip() {
-            const name = document.getElementById('newTripName').value;
-            const start = document.getElementById('newTripStart').value;
-            const end = document.getElementById('newTripEnd').value;
-            if (!name || !start || !end) { alert("Please fill all fields"); return; }
-            const dateArray = []; let dt = new Date(start);
-            while (dt <= new Date(end)) { dateArray.push(new Date(dt).toISOString().split('T')[0]); dt.setDate(dt.getDate() + 1); }
-            allTrips.push({ name, start, end, dailyItinerary: dateArray.map(d => ({date: d, items: []})), expenses: [], notes: "" });
-            saveAll(); hideCreateModal(); renderTripList();
-        }
-
         function renderTripDetail() {
             const trip = allTrips[currentTripIndex];
             document.getElementById('currentTripTitle').innerText = trip.name;
             document.getElementById('tripNotes').value = trip.notes || "";
-
             const daySelector = document.getElementById('daySelector');
             daySelector.innerHTML = trip.dailyItinerary.map((d, i) => {
                 const dateObj = new Date(d.date);
@@ -171,7 +161,6 @@
                     <div class="text-[10px] opacity-70 mb-1">${['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][dateObj.getDay()]}</div><div class="text-base font-bold">${d.date.substring(5).replace('-', '/')}</div>
                 </button>`;
             }).join('');
-
             const itItems = document.getElementById('itineraryItems');
             const items = trip.dailyItinerary[selectedDayIndex].items.sort((a,b) => a.time.localeCompare(b.time));
             itItems.innerHTML = items.length === 0 ? '<p class="text-center text-stone-400 py-20 text-base">Plan your day...</p>' :
@@ -183,48 +172,36 @@
                             <h3 class="font-black text-stone-800 text-lg leading-tight">${s.name}</h3>
                             <p class="text-[10px] text-blue-500 mt-1 font-bold">${s.weather || ''}</p>
                         </div>
-                        <button onclick="openNav('${s.name}')" class="ml-2 w-10 h-10 rounded-full btn-nav flex items-center justify-center active:scale-90 transition-all">
-                            <i class="fas fa-location-arrow text-sm"></i>
-                        </button>
+                        <button onclick="openNav('${s.name}')" class="ml-2 w-10 h-10 rounded-full btn-nav flex items-center justify-center"><i class="fas fa-location-arrow text-sm"></i></button>
                     </div>
                 </div>
             `).join('');
             updateTotal();
         }
 
-        function openNav(dest) { event.stopPropagation(); window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dest)}`, '_blank'); }
-
-        async function saveNewSpot() {
-            const time = document.getElementById('spotTime').value;
-            const name = document.getElementById('spotName').value;
-            if(!time || !name) return;
-            const btn = document.getElementById('btnSaveSpot'); btn.innerText = "...";
+        // --- 修正後的更新記帳清單邏輯 ---
+        function updateTotal() {
+            let total = 0;
+            const trip = allTrips[currentTripIndex];
+            const exList = document.getElementById('expenseList');
             
-            if(editingSpotIndex !== null) {
-                allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[editingSpotIndex].time = time;
-                allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[editingSpotIndex].name = name;
-            } else {
-                const weather = await fetchWeather();
-                allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items.push({ time, name, weather });
-            }
-            saveAll(); hideAddSpotModal(); renderTripDetail();
-            btn.innerText = "Confirm";
+            exList.innerHTML = trip.expenses.map(ex => {
+                total += ex.twd;
+                return `
+                <div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border border-stone-50">
+                    <div class="flex-1">
+                        <p class="font-bold text-stone-700 text-sm tracking-wide truncate pr-4">${ex.note}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[9px] text-stone-400 font-mono uppercase leading-none mb-1">${ex.amount} ${ex.curr}</p>
+                        <p class="text-sm font-bold text-stone-800 leading-none">NT$ ${ex.twd.toLocaleString()}</p>
+                    </div>
+                </div>`;
+            }).join('');
+            
+            document.getElementById('totalExpense').innerText = `NT$ ${total.toLocaleString()}`;
         }
 
-        function editSpot(idx) {
-            editingSpotIndex = idx;
-            const spot = allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[idx];
-            document.getElementById('spotModalTitle').innerText = "Edit Spot";
-            document.getElementById('spotTime').value = spot.time;
-            document.getElementById('spotName').value = spot.name;
-            document.getElementById('btnDeleteSpot').classList.remove('hidden');
-            showAddSpotModal();
-        }
-
-        function deleteSpot() { if(confirm("Delete this spot?")) { allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items.splice(editingSpotIndex, 1); saveAll(); hideAddSpotModal(); renderTripDetail(); } }
-        function showAddSpotModal() { document.getElementById('modal-add-spot').classList.remove('hidden'); }
-        function hideAddSpotModal() { document.getElementById('modal-add-spot').classList.add('hidden'); editingSpotIndex = null; document.getElementById('spotModalTitle').innerText="Add Spot"; document.getElementById('btnDeleteSpot').classList.add('hidden'); }
-        
         function addExpense() {
             const amount = parseFloat(document.getElementById('expAmount').value);
             const curr = document.getElementById('expCurrency').value;
@@ -235,29 +212,44 @@
                 saveAll(); renderTripDetail();
             }
         }
-        function updateTotal() {
-            let total = 0; const trip = allTrips[currentTripIndex];
-            document.getElementById('expenseList').innerHTML = trip.expenses.map(ex => {
-                total += ex.twd;
-                return `<div class="bg-white p-6 rounded-[1.5rem] flex justify-between items-center shadow-sm">
-                    <div><p class="font-black text-stone-700 text-base">${ex.note}</p><p class="text-[10px] text-stone-400 mt-1 uppercase">${ex.amount} ${ex.curr}</p></div>
-                    <span class="font-serif italic text-stone-800 text-xl font-bold">NT$ ${ex.twd}</span>
-                </div>`;
-            }).join('');
-            document.getElementById('totalExpense').innerText = `NT$ ${total.toLocaleString()}`;
+
+        // 其他功能 (Nav, Spot, Modals...)
+        function openNav(dest) { event.stopPropagation(); window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dest)}`, '_blank'); }
+        async function saveNewSpot() {
+            const t = document.getElementById('spotTime').value; const n = document.getElementById('spotName').value;
+            if(!t || !n) return;
+            if(editingSpotIndex !== null) {
+                allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[editingSpotIndex].time = t;
+                allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[editingSpotIndex].name = n;
+            } else {
+                const w = await fetchWeather();
+                allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items.push({ time: t, name: n, weather: w });
+            }
+            saveAll(); hideAddSpotModal(); renderTripDetail();
         }
-        
+        function editSpot(idx) {
+            editingSpotIndex = idx; const s = allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[idx];
+            document.getElementById('spotModalTitle').innerText = "Edit Spot";
+            document.getElementById('spotTime').value = s.time; document.getElementById('spotName').value = s.name;
+            document.getElementById('btnDeleteSpot').classList.remove('hidden'); showAddSpotModal();
+        }
+        function deleteSpot() { if(confirm("Delete?")) { allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items.splice(editingSpotIndex, 1); saveAll(); hideAddSpotModal(); renderTripDetail(); } }
+        function showAddSpotModal() { document.getElementById('modal-add-spot').classList.remove('hidden'); }
+        function hideAddSpotModal() { document.getElementById('modal-add-spot').classList.add('hidden'); editingSpotIndex = null; document.getElementById('btnDeleteSpot').classList.add('hidden'); }
+        function createNewTrip() {
+            const n = document.getElementById('newTripName').value; const s = document.getElementById('newTripStart').value; const e = document.getElementById('newTripEnd').value;
+            if(!n || !s || !e) return;
+            const dateArray = []; let dt = new Date(s);
+            while(dt <= new Date(e)) { dateArray.push(new Date(dt).toISOString().split('T')[0]); dt.setDate(dt.getDate()+1); }
+            allTrips.push({ name: n, start: s, end: e, dailyItinerary: dateArray.map(d=>({date: d, items: []})), expenses: [], notes: "" });
+            saveAll(); hideCreateModal(); renderTripList();
+        }
         function exportTripData() {
             const trip = allTrips[currentTripIndex];
-            let t = `☕️ ${trip.name}\n${trip.start} ~ ${trip.end}\n\n`;
-            trip.dailyItinerary.forEach(d => {
-                t += `[ ${d.date} ]\n`;
-                d.items.forEach(i => t += `• ${i.time} ${i.name}\n`);
-                t += `\n`;
-            });
-            navigator.clipboard.writeText(t).then(() => alert("COPIED!"));
+            let t = `☕️ ${trip.name}\n\n`;
+            trip.dailyItinerary.forEach(d => { t += `[ ${d.date} ]\n`; d.items.forEach(i => t += `• ${i.time} ${i.name}\n`); t += `\n`; });
+            navigator.clipboard.writeText(t).then(() => alert("COPIED"));
         }
-
         async function fetchWeather() {
             return new Promise(r => {
                 navigator.geolocation.getCurrentPosition(async p => {
@@ -265,21 +257,20 @@
                         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.coords.latitude}&longitude=${p.coords.longitude}&current_weather=true`);
                         const d = await res.json(); r(`${Math.round(d.current_weather.temperature)}°C`);
                     } catch { r(""); }
-                }, () => r(""), {timeout: 2500});
+                }, () => r(""), {timeout: 2000});
             });
         }
-
-        function saveAll() { localStorage.setItem('TravelTiramisu_V13', JSON.stringify(allTrips)); }
+        function saveAll() { localStorage.setItem('TravelTiramisu_V14', JSON.stringify(allTrips)); }
+        function goHome() { currentTripIndex = null; document.getElementById('view-home').classList.remove('hidden'); document.getElementById('view-detail').classList.add('hidden'); renderTripList(); }
         function showCreateModal() { document.getElementById('modal-create').classList.remove('hidden'); }
         function hideCreateModal() { document.getElementById('modal-create').classList.add('hidden'); }
-        function goHome() { currentTripIndex = null; document.getElementById('view-home').classList.remove('hidden'); document.getElementById('view-detail').classList.add('hidden'); renderTripList(); }
         function switchSubTab(t) {
             document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
             document.getElementById('sub-' + t).classList.add('active');
             document.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.remove('active'));
             event.currentTarget.classList.add('active');
         }
-        function deleteCurrentTrip() { if(confirm("DELETE ENTIRE TRIP?")) { allTrips.splice(currentTripIndex, 1); saveAll(); goHome(); } }
+        function deleteCurrentTrip() { if(confirm("DELETE?")) { allTrips.splice(currentTripIndex, 1); saveAll(); goHome(); } }
         window.onload = renderTripList;
     </script>
 </body>
