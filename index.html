@@ -1,277 +1,45 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TravelMate V14 - FinLayout</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root { --espresso: #4E342E; --cocoa: #6D4C41; --biscuit: #D7CCC8; --cream: #FDFBF9; --mascarpone: #FFFFFF; }
-        body { font-family: -apple-system, sans-serif; background-color: var(--cream); color: var(--espresso); padding-top: env(safe-area-inset-top); font-size: 16px; -webkit-tap-highlight-color: transparent; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .day-tab.active { background: var(--espresso); color: var(--mascarpone); transform: scale(1.05); }
-        .day-tab { background: var(--biscuit); color: var(--cocoa); transition: all 0.3s ease; }
-        .view-content { display: none; }
-        .view-content.active { display: block; }
-        .timeline-line::before { content: ''; position: absolute; left: 28px; top: 0; bottom: 0; width: 2px; background: var(--biscuit); z-index: 0; }
+<script>
+    // ... 前段代碼保持不變 ...
+    let allTrips = JSON.parse(localStorage.getItem('TravelTiramisu_V15')) || [];
+
+    function showDetail(index) {
+        try {
+            currentTripIndex = index;
+            // 先切換畫面，確保使用者看到反應
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-detail').classList.remove('hidden');
+            // 再執行渲染
+            renderTripDetail();
+        } catch (err) {
+            console.error("進入詳情頁出錯:", err);
+            // 即使報錯也強制顯示詳情頁面結構
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-detail').classList.remove('hidden');
+        }
+    }
+
+    // 修正 renderTripDetail，避免因為資料空缺導致渲染中斷
+    function renderTripDetail() {
+        const trip = allTrips[currentTripIndex];
+        if (!trip) return goHome();
+
+        document.getElementById('currentTripTitle').innerText = trip.name || "My Trip";
         
-        input, select, textarea { 
-            border: 1.5px solid var(--biscuit) !important; background: var(--mascarpone) !important; 
-            color: var(--espresso) !important; border-radius: 14px !important; padding: 12px 16px !important;
-        }
-        input[type="date"], input[type="time"] { font-size: 14px !important; }
-        input[type="text"], input[type="number"], textarea { font-size: 18px !important; }
-
-        .btn-primary { background: var(--espresso); color: var(--mascarpone); }
-        .sub-nav-btn.active { color: var(--espresso); }
-        .sub-nav-btn { color: var(--biscuit); transition: color 0.3s; }
-        .btn-nav { background: var(--cream); border: 1.5px solid var(--biscuit); color: var(--cocoa); }
-    </style>
-</head>
-<body class="pb-28">
-
-    <div id="view-home" class="p-8">
-        <header class="mb-12 text-center">
-            <h1 class="text-4xl font-serif font-bold tracking-widest uppercase">TravelMate</h1>
-            <p class="text-xs text-stone-400 mt-2 tracking-[0.2em] uppercase italic">Essence of Journey</p>
-        </header>
-        <div id="tripList" class="space-y-8"></div>
-        <button onclick="showCreateModal()" class="fixed bottom-10 right-8 btn-primary w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50">
-            <i class="fas fa-plus"></i>
-        </button>
-    </div>
-
-    <div id="view-detail" class="hidden min-h-screen">
-        <header class="bg-stone-50 p-6 sticky top-0 z-40 border-b border-stone-100">
-            <div class="flex justify-between items-center mb-6">
-                <button onclick="goHome()" class="p-2 -ml-2 text-stone-500"><i class="fas fa-chevron-left text-xl"></i></button>
-                <h2 id="currentTripTitle" class="text-lg font-black tracking-wide truncate px-4 text-center flex-1"></h2>
-                <div class="flex gap-4">
-                    <button onclick="exportTripData()" class="text-stone-500 p-2"><i class="fas fa-share-nodes text-xl"></i></button>
-                    <button onclick="deleteCurrentTrip()" class="text-stone-300 p-2"><i class="fas fa-trash-can text-xl"></i></button>
-                </div>
-            </div>
-            <div id="daySelector" class="flex overflow-x-auto space-x-4 no-scrollbar"></div>
-        </header>
-
-        <main class="p-6">
-            <div id="sub-itinerary" class="view-content active relative timeline-line">
-                <div id="itineraryItems" class="space-y-10 relative z-10"></div>
-                <button onclick="showAddSpotModal()" class="mt-14 w-full py-5 border-2 border-dashed border-stone-300 rounded-2xl text-stone-400 text-sm tracking-widest uppercase font-black">+ New Schedule</button>
-            </div>
-
-            <div id="sub-wallet" class="view-content space-y-6">
-                <div class="space-y-4 bg-white p-6 rounded-3xl border border-stone-50 shadow-sm">
-                    <div class="grid grid-cols-2 gap-3">
-                        <input id="expAmount" type="number" placeholder="0.00">
-                        <select id="expCurrency">
-                            <option value="TWD">TWD</option><option value="JPY">JPY</option>
-                            <option value="EUR">EUR</option><option value="USD">USD</option>
-                            <option value="KRW">KRW</option>
-                        </select>
-                    </div>
-                    <input id="expNote" type="text" placeholder="Item name">
-                    <button onclick="addExpense()" class="w-full btn-primary py-4 rounded-2xl text-sm font-black uppercase">Save Expense</button>
-                    
-                    <div class="pt-4 border-t border-stone-100 flex justify-between items-center px-2">
-                        <span class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Total Balance</span>
-                        <span id="totalExpense" class="text-xl font-serif italic font-bold text-stone-800">NT$ 0</span>
-                    </div>
-                </div>
-
-                <div id="expenseList" class="space-y-3"></div>
-            </div>
-
-            <div id="sub-notes" class="view-content">
-                <textarea id="tripNotes" class="w-full h-[65vh] p-4 text-lg border-none focus:ring-0" placeholder="Notes..." oninput="saveAll()"></textarea>
-            </div>
-        </main>
-
-        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-100 flex justify-around p-4 pb-12 z-50">
-            <button onclick="switchSubTab('itinerary')" class="sub-nav-btn active flex flex-col items-center flex-1">
-                <i class="fas fa-calendar-alt text-2xl"></i><span class="text-[10px] mt-2 font-black uppercase">Plan</span>
-            </button>
-            <button onclick="switchSubTab('wallet')" class="sub-nav-btn flex flex-col items-center flex-1">
-                <i class="fas fa-receipt text-2xl"></i><span class="text-[10px] mt-2 font-black uppercase">Cost</span>
-            </button>
-            <button onclick="switchSubTab('notes')" class="sub-nav-btn flex flex-col items-center flex-1">
-                <i class="fas fa-pen-nib text-2xl"></i><span class="text-[10px] mt-2 font-black uppercase">Note</span>
-            </button>
-        </nav>
-    </div>
-
-    <div id="modal-create" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-8">
-        <div class="bg-white w-full rounded-[2.5rem] p-10 space-y-6">
-            <h3 class="text-lg font-bold uppercase tracking-widest text-center">New Journey</h3>
-            <input id="newTripName" type="text" placeholder="Where to?">
-            <div class="space-y-4">
-                <div class="flex flex-col"><label class="text-[10px] ml-2 text-stone-400 font-bold uppercase">Start</label><input id="newTripStart" type="date"></div>
-                <div class="flex flex-col"><label class="text-[10px] ml-2 text-stone-400 font-bold uppercase">End</label><input id="newTripEnd" type="date"></div>
-            </div>
-            <button onclick="createNewTrip()" class="w-full btn-primary py-5 rounded-2xl text-sm font-black uppercase">Start</button>
-            <button onclick="hideCreateModal()" class="w-full text-stone-400 text-xs font-bold uppercase">Cancel</button>
-        </div>
-    </div>
-
-    <div id="modal-add-spot" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-[101] flex items-center justify-center p-8">
-        <div class="bg-white w-full rounded-[2.5rem] p-10 space-y-6">
-            <h3 id="spotModalTitle" class="text-lg font-bold uppercase tracking-widest text-center">Add Spot</h3>
-            <div class="space-y-4">
-                <div class="flex flex-col"><label class="text-[10px] ml-2 text-stone-400 font-bold uppercase">Time</label><input id="spotTime" type="time"></div>
-                <div class="flex flex-col"><label class="text-[10px] ml-2 text-stone-400 font-bold uppercase">Activity</label><input id="spotName" type="text" placeholder="Destination"></div>
-            </div>
-            <div class="flex gap-4 pt-2">
-                <button onclick="hideAddSpotModal()" class="flex-1 text-stone-400 text-sm font-bold uppercase">Cancel</button>
-                <button onclick="saveNewSpot()" id="btnSaveSpot" class="flex-1 btn-primary py-4 rounded-2xl text-sm font-black uppercase">Confirm</button>
-            </div>
-            <button id="btnDeleteSpot" onclick="deleteSpot()" class="hidden w-full text-red-300 text-xs font-bold uppercase mt-2">Delete</button>
-        </div>
-    </div>
-
-    <script>
-        const RATES = { TWD: 1, JPY: 0.21, EUR: 34.5, USD: 32.2, KRW: 0.024 };
-        let allTrips = JSON.parse(localStorage.getItem('TravelTiramisu_V14')) || [];
-        let currentTripIndex = null;
-        let selectedDayIndex = 0;
-        let editingSpotIndex = null;
-
-        function renderTripList() {
-            const list = document.getElementById('tripList');
-            list.innerHTML = allTrips.length === 0 ? '<p class="text-center text-stone-300 py-32 text-sm tracking-[0.2em]">EMPTY JOURNEY</p>' : 
-            allTrips.map((t, i) => `
-                <div onclick="showDetail(${i})" class="bg-white p-8 rounded-[2rem] shadow-sm flex justify-between items-center border border-stone-50 active:scale-95 transition-all">
-                    <div class="flex items-center gap-6">
-                        <div class="w-14 h-14 bg-stone-100 rounded-2xl flex items-center justify-center text-stone-400 font-serif text-2xl font-bold">${t.name[0]}</div>
-                        <div><h3 class="font-black text-xl text-stone-800">${t.name}</h3><p class="text-xs text-stone-400 font-mono mt-1">${t.start} — ${t.end}</p></div>
-                    </div>
-                    <i class="fas fa-chevron-right text-stone-200"></i>
-                </div>
-            `).join('');
-        }
-
-        function renderTripDetail() {
-            const trip = allTrips[currentTripIndex];
-            document.getElementById('currentTripTitle').innerText = trip.name;
-            document.getElementById('tripNotes').value = trip.notes || "";
-            const daySelector = document.getElementById('daySelector');
+        // 渲染天數標籤
+        const daySelector = document.getElementById('daySelector');
+        if (trip.dailyItinerary) {
             daySelector.innerHTML = trip.dailyItinerary.map((d, i) => {
                 const dateObj = new Date(d.date);
                 return `<button onclick="selectedDayIndex=${i}; renderTripDetail()" class="day-tab flex-shrink-0 min-w-[75px] p-3 rounded-2xl text-center ${selectedDayIndex === i ? 'active' : ''}">
-                    <div class="text-[10px] opacity-70 mb-1">${['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][dateObj.getDay()]}</div><div class="text-base font-bold">${d.date.substring(5).replace('-', '/')}</div>
+                    <div class="text-[10px] opacity-70 mb-1">${['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][dateObj.getDay()]}</div>
+                    <div class="text-base font-bold">${d.date.substring(5).replace('-', '/')}</div>
                 </button>`;
             }).join('');
-            const itItems = document.getElementById('itineraryItems');
-            const items = trip.dailyItinerary[selectedDayIndex].items.sort((a,b) => a.time.localeCompare(b.time));
-            itItems.innerHTML = items.length === 0 ? '<p class="text-center text-stone-400 py-20 text-base">Plan your day...</p>' :
-            items.map((s, idx) => `
-                <div class="flex gap-6 relative">
-                    <div onclick="editSpot(${idx})" class="z-10 bg-stone-800 w-14 h-14 rounded-full border-[6px] border-[#FDFBF9] shadow-sm flex-shrink-0 flex items-center justify-center text-white text-[10px] font-black">${s.time}</div>
-                    <div class="bg-white p-5 rounded-[1.5rem] flex-1 flex justify-between items-center shadow-sm border border-stone-50">
-                        <div onclick="editSpot(${idx})" class="flex-1">
-                            <h3 class="font-black text-stone-800 text-lg leading-tight">${s.name}</h3>
-                            <p class="text-[10px] text-blue-500 mt-1 font-bold">${s.weather || ''}</p>
-                        </div>
-                        <button onclick="openNav('${s.name}')" class="ml-2 w-10 h-10 rounded-full btn-nav flex items-center justify-center"><i class="fas fa-location-arrow text-sm"></i></button>
-                    </div>
-                </div>
-            `).join('');
-            updateTotal();
         }
 
-        // --- 修正後的更新記帳清單邏輯 ---
-        function updateTotal() {
-            let total = 0;
-            const trip = allTrips[currentTripIndex];
-            const exList = document.getElementById('expenseList');
-            
-            exList.innerHTML = trip.expenses.map(ex => {
-                total += ex.twd;
-                return `
-                <div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border border-stone-50">
-                    <div class="flex-1">
-                        <p class="font-bold text-stone-700 text-sm tracking-wide truncate pr-4">${ex.note}</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[9px] text-stone-400 font-mono uppercase leading-none mb-1">${ex.amount} ${ex.curr}</p>
-                        <p class="text-sm font-bold text-stone-800 leading-none">NT$ ${ex.twd.toLocaleString()}</p>
-                    </div>
-                </div>`;
-            }).join('');
-            
-            document.getElementById('totalExpense').innerText = `NT$ ${total.toLocaleString()}`;
-        }
-
-        function addExpense() {
-            const amount = parseFloat(document.getElementById('expAmount').value);
-            const curr = document.getElementById('expCurrency').value;
-            const note = document.getElementById('expNote').value;
-            if (amount && note) {
-                allTrips[currentTripIndex].expenses.unshift({ amount, curr, note, twd: Math.round(amount * RATES[curr]) });
-                document.getElementById('expAmount').value = ''; document.getElementById('expNote').value = '';
-                saveAll(); renderTripDetail();
-            }
-        }
-
-        // 其他功能 (Nav, Spot, Modals...)
-        function openNav(dest) { event.stopPropagation(); window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dest)}`, '_blank'); }
-        async function saveNewSpot() {
-            const t = document.getElementById('spotTime').value; const n = document.getElementById('spotName').value;
-            if(!t || !n) return;
-            if(editingSpotIndex !== null) {
-                allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[editingSpotIndex].time = t;
-                allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[editingSpotIndex].name = n;
-            } else {
-                const w = await fetchWeather();
-                allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items.push({ time: t, name: n, weather: w });
-            }
-            saveAll(); hideAddSpotModal(); renderTripDetail();
-        }
-        function editSpot(idx) {
-            editingSpotIndex = idx; const s = allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[idx];
-            document.getElementById('spotModalTitle').innerText = "Edit Spot";
-            document.getElementById('spotTime').value = s.time; document.getElementById('spotName').value = s.name;
-            document.getElementById('btnDeleteSpot').classList.remove('hidden'); showAddSpotModal();
-        }
-        function deleteSpot() { if(confirm("Delete?")) { allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items.splice(editingSpotIndex, 1); saveAll(); hideAddSpotModal(); renderTripDetail(); } }
-        function showAddSpotModal() { document.getElementById('modal-add-spot').classList.remove('hidden'); }
-        function hideAddSpotModal() { document.getElementById('modal-add-spot').classList.add('hidden'); editingSpotIndex = null; document.getElementById('btnDeleteSpot').classList.add('hidden'); }
-        function createNewTrip() {
-            const n = document.getElementById('newTripName').value; const s = document.getElementById('newTripStart').value; const e = document.getElementById('newTripEnd').value;
-            if(!n || !s || !e) return;
-            const dateArray = []; let dt = new Date(s);
-            while(dt <= new Date(e)) { dateArray.push(new Date(dt).toISOString().split('T')[0]); dt.setDate(dt.getDate()+1); }
-            allTrips.push({ name: n, start: s, end: e, dailyItinerary: dateArray.map(d=>({date: d, items: []})), expenses: [], notes: "" });
-            saveAll(); hideCreateModal(); renderTripList();
-        }
-        function exportTripData() {
-            const trip = allTrips[currentTripIndex];
-            let t = `☕️ ${trip.name}\n\n`;
-            trip.dailyItinerary.forEach(d => { t += `[ ${d.date} ]\n`; d.items.forEach(i => t += `• ${i.time} ${i.name}\n`); t += `\n`; });
-            navigator.clipboard.writeText(t).then(() => alert("COPIED"));
-        }
-        async function fetchWeather() {
-            return new Promise(r => {
-                navigator.geolocation.getCurrentPosition(async p => {
-                    try {
-                        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.coords.latitude}&longitude=${p.coords.longitude}&current_weather=true`);
-                        const d = await res.json(); r(`${Math.round(d.current_weather.temperature)}°C`);
-                    } catch { r(""); }
-                }, () => r(""), {timeout: 2000});
-            });
-        }
-        function saveAll() { localStorage.setItem('TravelTiramisu_V14', JSON.stringify(allTrips)); }
-        function goHome() { currentTripIndex = null; document.getElementById('view-home').classList.remove('hidden'); document.getElementById('view-detail').classList.add('hidden'); renderTripList(); }
-        function showCreateModal() { document.getElementById('modal-create').classList.remove('hidden'); }
-        function hideCreateModal() { document.getElementById('modal-create').classList.add('hidden'); }
-        function switchSubTab(t) {
-            document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
-            document.getElementById('sub-' + t).classList.add('active');
-            document.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-        }
-        function deleteCurrentTrip() { if(confirm("DELETE?")) { allTrips.splice(currentTripIndex, 1); saveAll(); goHome(); } }
-        window.onload = renderTripList;
-    </script>
-</body>
-</html>
+        // 渲染行程項目
+        renderItineraryItems(trip);
+        updateTotal(); // 更新帳務
+    }
+    // ... 後續函式保持不變 ...
+</script>
