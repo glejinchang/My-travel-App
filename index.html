@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TravelMate V17</title>
+    <title>TravelMate V18</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -53,36 +53,14 @@
 
             <div id="sub-wallet" class="view-content space-y-6">
                 <div class="bg-white p-6 rounded-3xl border border-stone-50 shadow-sm space-y-4">
-                    <div class="grid grid-cols-2 gap-3">
-                        <input id="expAmount" type="number" placeholder="0.00">
-                        <select id="expCurrency">
-                            <option value="TWD">台幣 TWD</option>
-                            <option value="JPY">日幣 JPY</option>
-                            <option value="KRW">韓元 KRW</option>
-                            <option value="USD">美金 USD</option>
-                            <option value="EUR">歐元 EUR</option>
-                            <option value="GBP">英鎊 GBP</option>
-                            <option value="AUD">澳幣 AUD</option>
-                            <option value="CHF">瑞士法郎 CHF</option>
-                            <option value="CNY">人民幣 CNY</option>
-                            <option value="HKD">港幣 HKD</option>
-                            <option value="THB">泰銖 THB</option>
-                            <option value="SGD">新加坡幣 SGD</option>
-                            <option value="CZK">捷克克朗 CZK</option>
-                            <option value="DKK">丹麥克朗 DKK</option>
-                            <option value="HUF">匈牙利福林 HUF</option>
-                        </select>
-                    </div>
-                    <input id="expNote" type="text" placeholder="品項名稱">
-                    <button onclick="addExpense()" class="w-full btn-primary py-4 rounded-2xl font-black uppercase">Save Expense</button>
+                    <button onclick="showExpenseModal()" class="w-full py-4 border-2 border-dashed border-stone-200 rounded-2xl text-stone-400 text-sm font-bold uppercase tracking-widest">+ Add New Expense</button>
                     
-                    <div class="pt-4 border-t border-stone-100 space-y-2">
+                    <div class="pt-2 border-t border-stone-100 space-y-2">
                         <div class="flex justify-between items-center px-2">
                             <span class="text-[10px] font-bold text-stone-400 uppercase">Total (TWD)</span>
                             <span id="totalExpense" class="text-xl font-serif italic font-bold">NT$ 0</span>
                         </div>
-                        <div id="currencyBreakdown" class="px-2 space-y-1">
-                            </div>
+                        <div id="currencyBreakdown" class="px-2 space-y-1"></div>
                     </div>
                 </div>
                 <div id="expenseList" class="space-y-3"></div>
@@ -100,43 +78,56 @@
         </nav>
     </div>
 
+    <div id="modal-expense" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-[110] flex items-center justify-center p-8">
+        <div class="bg-white w-full rounded-[2.5rem] p-10 space-y-4">
+            <h3 id="expenseModalTitle" class="font-bold text-center uppercase">Add Expense</h3>
+            <div class="grid grid-cols-2 gap-3">
+                <input id="expAmount" type="number" placeholder="0.00">
+                <select id="expCurrency">
+                    <option value="TWD">台幣 TWD</option><option value="JPY">日幣 JPY</option><option value="KRW">韓元 KRW</option>
+                    <option value="USD">美金 USD</option><option value="EUR">歐元 EUR</option><option value="GBP">英鎊 GBP</option>
+                    <option value="AUD">澳幣 AUD</option><option value="CHF">瑞士法郎 CHF</option><option value="CNY">人民幣 CNY</option>
+                    <option value="HKD">港幣 HKD</option><option value="THB">泰銖 THB</option><option value="SGD">新加坡幣 SGD</option>
+                    <option value="CZK">捷克克朗 CZK</option><option value="DKK">丹麥克朗 DKK</option><option value="HUF">匈牙利福林 HUF</option>
+                </select>
+            </div>
+            <input id="expNote" type="text" placeholder="Item Name">
+            <div class="flex gap-4 pt-2">
+                <button onclick="hideExpenseModal()" class="flex-1 text-stone-400 text-sm">Cancel</button>
+                <button onclick="saveExpense()" class="flex-1 btn-primary py-4 rounded-2xl font-black">SAVE</button>
+            </div>
+            <button id="btnDeleteExpense" onclick="deleteExpense()" class="hidden w-full text-red-300 text-[10px] font-bold mt-2 uppercase tracking-widest">Delete this item</button>
+        </div>
+    </div>
+
     <div id="modal-create" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-8">
         <div class="bg-white w-full rounded-[2.5rem] p-10 space-y-4">
             <h3 class="font-bold text-center uppercase">New Journey</h3>
             <input id="newTripName" type="text" placeholder="Trip Name">
-            <input id="newTripStart" type="date">
-            <input id="newTripEnd" type="date">
+            <input id="newTripStart" type="date"><input id="newTripEnd" type="date">
             <button onclick="createNewTrip()" class="w-full btn-primary py-4 rounded-2xl font-black">START</button>
-            <button onclick="hideCreateModal()" class="w-full text-stone-400 text-xs font-bold text-center w-full block">CANCEL</button>
+            <button onclick="hideCreateModal()" class="w-full text-stone-400 text-xs font-bold text-center block">CANCEL</button>
         </div>
     </div>
 
     <div id="modal-add-spot" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-[101] flex items-center justify-center p-8">
         <div class="bg-white w-full rounded-[2.5rem] p-10 space-y-4">
             <h3 id="spotModalTitle" class="font-bold text-center uppercase">Add Spot</h3>
-            <input id="spotTime" type="time">
-            <input id="spotName" type="text" placeholder="Activity">
-            <div class="flex gap-4">
-                <button onclick="hideAddSpotModal()" class="flex-1 text-stone-400 text-sm">Cancel</button>
-                <button onclick="saveNewSpot()" class="flex-1 btn-primary py-4 rounded-2xl font-black">OK</button>
-            </div>
+            <input id="spotTime" type="time"><input id="spotName" type="text" placeholder="Activity">
+            <div class="flex gap-4"><button onclick="hideAddSpotModal()" class="flex-1 text-stone-400 text-sm">Cancel</button><button onclick="saveNewSpot()" class="flex-1 btn-primary py-4 rounded-2xl font-black">OK</button></div>
             <button id="btnDeleteSpot" onclick="deleteSpot()" class="hidden w-full text-red-300 text-xs mt-2">DELETE</button>
         </div>
     </div>
 
     <script>
-        // 設定各幣別對台幣匯率 (大約值)
-        const RATES = { 
-            TWD: 1, JPY: 0.21, KRW: 0.024, USD: 32.5, EUR: 35.2, GBP: 41.2, 
-            AUD: 21.5, CHF: 37.8, CNY: 4.5, HKD: 4.1, THB: 0.9, SGD: 24.2,
-            CZK: 1.4, DKK: 4.7, HUF: 0.09 
-        };
-
-        let allTrips = JSON.parse(localStorage.getItem('TravelMate_V17')) || [];
+        const RATES = { TWD: 1, JPY: 0.21, KRW: 0.024, USD: 32.5, EUR: 35.2, GBP: 41.2, AUD: 21.5, CHF: 37.8, CNY: 4.5, HKD: 4.1, THB: 0.9, SGD: 24.2, CZK: 1.4, DKK: 4.7, HUF: 0.09 };
+        let allTrips = JSON.parse(localStorage.getItem('TravelMate_V18')) || [];
         let currentTripIndex = null;
         let selectedDayIndex = 0;
         let editingSpotIndex = null;
+        let editingExpenseIndex = null; // 新增：用於追蹤正在編輯哪一筆消費
 
+        // --- 核心功能：顯示/渲染 ---
         function renderTripList() {
             const list = document.getElementById('tripList');
             if(!list) return;
@@ -146,17 +137,8 @@
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 bg-stone-100 rounded-xl flex items-center justify-center font-bold text-stone-400">${t.name ? t.name[0] : '?'}</div>
                         <div><h3 class="font-black text-stone-800">${t.name}</h3><p class="text-[10px] text-stone-400 font-mono">${t.start} - ${t.end}</p></div>
-                    </div>
-                    <i class="fas fa-chevron-right text-stone-200"></i>
-                </div>
-            `).join('');
-        }
-
-        function showDetail(idx) {
-            currentTripIndex = idx;
-            document.getElementById('view-home').classList.add('hidden');
-            document.getElementById('view-detail').classList.remove('hidden');
-            renderTripDetail();
+                    </div><i class="fas fa-chevron-right text-stone-200"></i>
+                </div>`).join('');
         }
 
         function renderTripDetail() {
@@ -170,8 +152,7 @@
                 <button onclick="selectedDayIndex=${i}; renderTripDetail()" class="day-tab flex-shrink-0 min-w-[70px] p-3 rounded-2xl text-center ${selectedDayIndex === i ? 'active' : ''}">
                     <div class="text-[10px] opacity-70 mb-1 font-bold">${['SUN','MON','TUE','WED','THU','FRI','SAT'][new Date(d.date).getDay()]}</div>
                     <div class="text-sm font-black">${d.date.substring(5).replace('-','/')}</div>
-                </button>
-            `).join('');
+                </button>`).join('');
 
             const itItems = document.getElementById('itineraryItems');
             const items = (trip.dailyItinerary[selectedDayIndex].items || []).sort((a,b) => a.time.localeCompare(b.time));
@@ -183,40 +164,70 @@
                         <div onclick="editSpot(${idx})" class="flex-1"><h3 class="font-bold text-stone-800">${s.name}</h3><p class="text-[10px] text-blue-500 font-bold">${s.weather || ''}</p></div>
                         <button onclick="openNav('${s.name}')" class="w-8 h-8 rounded-full border border-stone-100 flex items-center justify-center text-stone-400"><i class="fas fa-location-arrow text-xs"></i></button>
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
             updateTotal();
         }
 
-        function addExpense() {
+        // --- 記帳編輯與刪除功能 ---
+        function showExpenseModal(idx = null) {
+            editingExpenseIndex = idx;
+            const modal = document.getElementById('modal-expense');
+            const delBtn = document.getElementById('btnDeleteExpense');
+            const title = document.getElementById('expenseModalTitle');
+            
+            if (idx !== null) {
+                const ex = allTrips[currentTripIndex].expenses[idx];
+                document.getElementById('expAmount').value = ex.amount;
+                document.getElementById('expCurrency').value = ex.curr;
+                document.getElementById('expNote').value = ex.note;
+                title.innerText = "Edit Expense";
+                delBtn.classList.remove('hidden');
+            } else {
+                document.getElementById('expAmount').value = '';
+                document.getElementById('expNote').value = '';
+                title.innerText = "Add Expense";
+                delBtn.classList.add('hidden');
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function hideExpenseModal() { document.getElementById('modal-expense').classList.add('hidden'); }
+
+        function saveExpense() {
             const amount = parseFloat(document.getElementById('expAmount').value);
             const curr = document.getElementById('expCurrency').value;
             const note = document.getElementById('expNote').value;
-            if (amount && note) {
-                allTrips[currentTripIndex].expenses.unshift({ 
-                    amount, curr, note, 
-                    twd: Math.round(amount * (RATES[curr] || 1)) 
-                });
-                document.getElementById('expAmount').value = ''; 
-                document.getElementById('expNote').value = '';
-                saveAll(); renderTripDetail();
+            if (!amount || !note) return;
+
+            const expenseData = { amount, curr, note, twd: Math.round(amount * (RATES[curr] || 1)) };
+
+            if (editingExpenseIndex !== null) {
+                allTrips[currentTripIndex].expenses[editingExpenseIndex] = expenseData;
+            } else {
+                allTrips[currentTripIndex].expenses.unshift(expenseData);
+            }
+            
+            saveAll(); hideExpenseModal(); renderTripDetail();
+        }
+
+        function deleteExpense() {
+            if (confirm("Delete this expense item?")) {
+                allTrips[currentTripIndex].expenses.splice(editingExpenseIndex, 1);
+                saveAll(); hideExpenseModal(); renderTripDetail();
             }
         }
 
         function updateTotal() {
             let totalTWD = 0;
-            let foreignTotals = {}; // 用於存各幣別總和
+            let foreignTotals = {};
             const trip = allTrips[currentTripIndex];
             const list = document.getElementById('expenseList');
             
-            list.innerHTML = (trip.expenses || []).map(ex => {
+            list.innerHTML = (trip.expenses || []).map((ex, idx) => {
                 totalTWD += ex.twd;
-                // 統計外幣
-                if(ex.curr !== 'TWD') {
-                    foreignTotals[ex.curr] = (foreignTotals[ex.curr] || 0) + ex.amount;
-                }
+                if(ex.curr !== 'TWD') foreignTotals[ex.curr] = (foreignTotals[ex.curr] || 0) + ex.amount;
 
-                return `<div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border border-stone-50">
+                return `<div onclick="showExpenseModal(${idx})" class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border border-stone-50 active:bg-stone-50">
                     <p class="font-bold text-stone-700 text-sm flex-1 truncate pr-4">${ex.note}</p>
                     <div class="text-right">
                         <p class="text-[9px] text-stone-400 font-mono uppercase">${ex.amount} ${ex.curr}</p>
@@ -225,55 +236,51 @@
                 </div>`;
             }).join('');
 
-            // 更新台幣總額
             document.getElementById('totalExpense').innerText = `NT$ ${totalTWD.toLocaleString()}`;
-
-            // 更新外幣統計顯示
             const breakdown = document.getElementById('currencyBreakdown');
             const foreignKeys = Object.keys(foreignTotals);
-            if(foreignKeys.length > 0) {
-                breakdown.innerHTML = foreignKeys.map(k => `
-                    <div class="flex justify-between text-[11px] font-mono text-stone-500">
-                        <span>${k} SUB-TOTAL:</span>
-                        <span class="font-bold">${foreignTotals[k].toLocaleString()} ${k}</span>
-                    </div>
-                `).join('');
-            } else {
-                breakdown.innerHTML = '';
-            }
+            breakdown.innerHTML = foreignKeys.length > 0 ? foreignKeys.map(k => `
+                <div class="flex justify-between text-[11px] font-mono text-stone-500">
+                    <span>${k} SUB-TOTAL:</span><span class="font-bold">${foreignTotals[k].toLocaleString()} ${k}</span>
+                </div>`).join('') : '';
         }
 
-        function openNav(dest) { event.stopPropagation(); window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dest)}`, '_blank'); }
-        async function saveNewSpot() {
-            const time = document.getElementById('spotTime').value;
-            const name = document.getElementById('spotName').value;
-            if(!time || !name) return;
-            if(editingSpotIndex !== null) {
-                allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[editingSpotIndex] = { ...allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[editingSpotIndex], time, name };
-            } else {
-                const weather = await fetchWeather();
-                allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items.push({ time, name, weather });
-            }
-            saveAll(); hideAddSpotModal(); renderTripDetail();
-        }
-        function editSpot(idx) {
-            editingSpotIndex = idx;
-            const s = allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[idx];
-            document.getElementById('spotModalTitle').innerText = "Edit Spot";
-            document.getElementById('spotTime').value = s.time;
-            document.getElementById('spotName').value = s.name;
-            document.getElementById('btnDeleteSpot').classList.remove('hidden');
-            showAddSpotModal();
-        }
+        // --- 其他工具函式 (保持不變) ---
+        function saveAll() { localStorage.setItem('TravelMate_V18', JSON.stringify(allTrips)); }
+        function goHome() { currentTripIndex = null; document.getElementById('view-home').classList.remove('hidden'); document.getElementById('view-detail').classList.add('hidden'); renderTripList(); }
+        function showDetail(idx) { currentTripIndex = idx; document.getElementById('view-home').classList.add('hidden'); document.getElementById('view-detail').classList.remove('hidden'); renderTripDetail(); }
+        function showCreateModal() { document.getElementById('modal-create').classList.remove('hidden'); }
+        function hideCreateModal() { document.getElementById('modal-create').classList.add('hidden'); }
         function createNewTrip() {
-            const name = document.getElementById('newTripName').value;
-            const start = document.getElementById('newTripStart').value;
-            const end = document.getElementById('newTripEnd').value;
+            const name = document.getElementById('newTripName').value; const start = document.getElementById('newTripStart').value; const end = document.getElementById('newTripEnd').value;
             if(!name || !start || !end) return;
             const dateArray = []; let dt = new Date(start);
             while(dt <= new Date(end)) { dateArray.push(new Date(dt).toISOString().split('T')[0]); dt.setDate(dt.getDate()+1); }
             allTrips.push({ name, start, end, dailyItinerary: dateArray.map(d=>({date: d, items: []})), expenses: [], notes: "" });
             saveAll(); hideCreateModal(); renderTripList();
+        }
+        function openNav(dest) { event.stopPropagation(); window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dest)}`, '_blank'); }
+        function showAddSpotModal() { document.getElementById('modal-add-spot').classList.remove('hidden'); }
+        function hideAddSpotModal() { document.getElementById('modal-add-spot').classList.add('hidden'); editingSpotIndex = null; document.getElementById('btnDeleteSpot').classList.add('hidden'); }
+        async function saveNewSpot() {
+            const time = document.getElementById('spotTime').value; const name = document.getElementById('spotName').value;
+            if(!time || !name) return;
+            if(editingSpotIndex !== null) { allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[editingSpotIndex] = { ...allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[editingSpotIndex], time, name };
+            } else { const weather = await fetchWeather(); allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items.push({ time, name, weather }); }
+            saveAll(); hideAddSpotModal(); renderTripDetail();
+        }
+        function editSpot(idx) {
+            editingSpotIndex = idx; const s = allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[idx];
+            document.getElementById('spotModalTitle').innerText = "Edit Spot"; document.getElementById('spotTime').value = s.time; document.getElementById('spotName').value = s.name;
+            document.getElementById('btnDeleteSpot').classList.remove('hidden'); showAddSpotModal();
+        }
+        function deleteSpot() { if(confirm("Delete?")) { allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items.splice(editingSpotIndex, 1); saveAll(); hideAddSpotModal(); renderTripDetail(); } }
+        function deleteCurrentTrip() { if(confirm("Delete Trip?")) { allTrips.splice(currentTripIndex, 1); saveAll(); goHome(); } }
+        function switchSubTab(t) {
+            document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
+            document.getElementById('sub-' + t).classList.add('active');
+            document.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
         }
         async function fetchWeather() {
             return new Promise(r => {
@@ -284,20 +291,6 @@
                     } catch { r(""); }
                 }, () => r(""), {timeout: 2000});
             });
-        }
-        function saveAll() { localStorage.setItem('TravelMate_V17', JSON.stringify(allTrips)); }
-        function goHome() { currentTripIndex = null; document.getElementById('view-home').classList.remove('hidden'); document.getElementById('view-detail').classList.add('hidden'); renderTripList(); }
-        function showCreateModal() { document.getElementById('modal-create').classList.remove('hidden'); }
-        function hideCreateModal() { document.getElementById('modal-create').classList.add('hidden'); }
-        function showAddSpotModal() { document.getElementById('modal-add-spot').classList.remove('hidden'); }
-        function hideAddSpotModal() { document.getElementById('modal-add-spot').classList.add('hidden'); editingSpotIndex = null; document.getElementById('btnDeleteSpot').classList.add('hidden'); }
-        function deleteSpot() { if(confirm("Delete?")) { allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items.splice(editingSpotIndex, 1); saveAll(); hideAddSpotModal(); renderTripDetail(); } }
-        function deleteCurrentTrip() { if(confirm("Delete Trip?")) { allTrips.splice(currentTripIndex, 1); saveAll(); goHome(); } }
-        function switchSubTab(t) {
-            document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
-            document.getElementById('sub-' + t).classList.add('active');
-            document.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.remove('active'));
-            event.currentTarget.classList.add('active');
         }
         function exportTripData() {
             const trip = allTrips[currentTripIndex];
