@@ -117,30 +117,54 @@
         </nav>
     </div>
 
-    <div id="modal-create" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-8">
-        <div class="bg-white w-full rounded-[2.5rem] p-10 space-y-6">
-            <h3 class="text-lg font-bold uppercase tracking-widest text-center">New Journey</h3>
-            <input id="newTripName" type="text" placeholder="Where to?">
-            <div class="grid grid-cols-2 gap-4">
-                <input id="newTripStart" type="date">
-                <input id="newTripEnd" type="date">
+    <div id="modal-create" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
+    <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 space-y-6 shadow-2xl">
+        <h3 class="text-xl font-bold uppercase tracking-widest text-center">New Journey</h3>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="text-[10px] font-bold text-stone-400 ml-2 uppercase tracking-widest">Trip Title</label>
+                <input id="newTripName" type="text" placeholder="e.g. Tokyo Spring" class="w-full mt-1">
             </div>
-            <button onclick="createNewTrip()" class="w-full btn-primary py-5 rounded-[1.2rem] text-sm font-black tracking-widest uppercase">Start Journey</button>
-            <button onclick="hideCreateModal()" class="w-full text-stone-400 text-xs font-bold uppercase">Cancel</button>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-bold text-stone-400 ml-2 uppercase tracking-widest">Start Date</label>
+                    <input id="newTripStart" type="date" class="w-full mt-1">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-stone-400 ml-2 uppercase tracking-widest">End Date</label>
+                    <input id="newTripEnd" type="date" class="w-full mt-1">
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div id="modal-add-spot" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-[101] flex items-center justify-center p-8">
-        <div class="bg-white w-full rounded-[2.5rem] p-10 space-y-6">
-            <h3 class="text-lg font-bold uppercase tracking-widest text-center">Add Spot</h3>
-            <input id="spotTime" type="time">
-            <input id="spotName" type="text" placeholder="Activity">
-            <div class="flex gap-4 pt-2">
-                <button onclick="hideAddSpotModal()" class="flex-1 text-stone-400 text-sm font-bold">Cancel</button>
-                <button onclick="saveNewSpot()" id="btnSaveSpot" class="flex-1 btn-primary py-4 rounded-[1.2rem] text-sm font-black uppercase">Add</button>
+        <button onclick="createNewTrip()" class="w-full btn-primary py-5 rounded-2xl text-sm font-black tracking-widest uppercase shadow-lg active:scale-95 transition-transform">Start Journey</button>
+        <button onclick="hideCreateModal()" class="w-full text-stone-400 text-xs font-bold uppercase tracking-tighter">Maybe later</button>
+    </div>
+</div>
+
+<div id="modal-add-spot" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-[101] flex items-center justify-center p-6">
+    <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 space-y-6 shadow-2xl">
+        <h3 class="text-xl font-bold uppercase tracking-widest text-center">Add Spot</h3>
+        
+        <div class="space-y-5">
+            <div>
+                <label class="text-[10px] font-bold text-stone-400 ml-2 uppercase tracking-widest">Arrival Time</label>
+                <input id="spotTime" type="time" class="w-full mt-1 font-mono text-center">
+            </div>
+            <div>
+                <label class="text-[10px] font-bold text-stone-400 ml-2 uppercase tracking-widest">Destination / Activity</label>
+                <input id="spotName" type="text" placeholder="What's the plan?" class="w-full mt-1">
             </div>
         </div>
+
+        <div class="flex gap-4 pt-2">
+            <button onclick="hideAddSpotModal()" class="flex-1 text-stone-400 text-sm font-bold uppercase">Cancel</button>
+            <button onclick="saveNewSpot()" id="btnSaveSpot" class="flex-1 btn-primary py-4 rounded-2xl text-sm font-black uppercase shadow-md active:scale-95 transition-transform">Add</button>
+        </div>
     </div>
+</div>
 
     <script>
         const RATES = { TWD: 1, JPY: 0.21, EUR: 34.5, GBP: 41.2, AUD: 21.5, NZD: 19.8, USD: 32.2, KRW: 0.024 };
@@ -319,4 +343,5 @@
         window.onload = renderTripList;
     </script>
 </body>
+
 </html>
