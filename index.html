@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TravelMate V16</title>
+    <title>TravelMate V17</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --espresso: #4E342E; --cocoa: #6D4C41; --biscuit: #D7CCC8; --cream: #FDFBF9; --mascarpone: #FFFFFF; }
         body { font-family: -apple-system, sans-serif; background-color: var(--cream); color: var(--espresso); padding-top: env(safe-area-inset-top); font-size: 16px; -webkit-tap-highlight-color: transparent; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
         .day-tab.active { background: var(--espresso); color: var(--mascarpone); }
         .day-tab { background: var(--biscuit); color: var(--cocoa); transition: all 0.2s; }
         .view-content { display: none; }
         .view-content.active { display: block; }
         .timeline-line::before { content: ''; position: absolute; left: 28px; top: 0; bottom: 0; width: 2px; background: var(--biscuit); z-index: 0; }
         input, select, textarea { border: 1.5px solid var(--biscuit) !important; background: var(--mascarpone) !important; color: var(--espresso) !important; border-radius: 14px !important; padding: 12px 16px !important; width: 100%; }
-        input[type="date"], input[type="time"] { font-size: 14px !important; }
         .btn-primary { background: var(--espresso); color: var(--mascarpone); }
         .sub-nav-btn { color: var(--biscuit); }
         .sub-nav-btn.active { color: var(--espresso); }
     </style>
 </head>
-<body class="pb-28">
+<body class="pb-32">
 
     <div id="view-home" class="p-8">
         <header class="mb-12 text-center">
@@ -29,9 +29,7 @@
             <p class="text-xs text-stone-400 mt-2 tracking-[0.2em] uppercase italic">Essence of Journey</p>
         </header>
         <div id="tripList" class="space-y-6"></div>
-        <button onclick="showCreateModal()" class="fixed bottom-10 right-8 btn-primary w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50">
-            <i class="fas fa-plus"></i>
-        </button>
+        <button onclick="showCreateModal()" class="fixed bottom-10 right-8 btn-primary w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50"><i class="fas fa-plus"></i></button>
     </div>
 
     <div id="view-detail" class="hidden min-h-screen">
@@ -57,13 +55,34 @@
                 <div class="bg-white p-6 rounded-3xl border border-stone-50 shadow-sm space-y-4">
                     <div class="grid grid-cols-2 gap-3">
                         <input id="expAmount" type="number" placeholder="0.00">
-                        <select id="expCurrency"><option value="TWD">TWD</option><option value="JPY">JPY</option><option value="EUR">EUR</option><option value="USD">USD</option></select>
+                        <select id="expCurrency">
+                            <option value="TWD">台幣 TWD</option>
+                            <option value="JPY">日幣 JPY</option>
+                            <option value="KRW">韓元 KRW</option>
+                            <option value="USD">美金 USD</option>
+                            <option value="EUR">歐元 EUR</option>
+                            <option value="GBP">英鎊 GBP</option>
+                            <option value="AUD">澳幣 AUD</option>
+                            <option value="CHF">瑞士法郎 CHF</option>
+                            <option value="CNY">人民幣 CNY</option>
+                            <option value="HKD">港幣 HKD</option>
+                            <option value="THB">泰銖 THB</option>
+                            <option value="SGD">新加坡幣 SGD</option>
+                            <option value="CZK">捷克克朗 CZK</option>
+                            <option value="DKK">丹麥克朗 DKK</option>
+                            <option value="HUF">匈牙利福林 HUF</option>
+                        </select>
                     </div>
-                    <input id="expNote" type="text" placeholder="Item Name">
+                    <input id="expNote" type="text" placeholder="品項名稱">
                     <button onclick="addExpense()" class="w-full btn-primary py-4 rounded-2xl font-black uppercase">Save Expense</button>
-                    <div class="pt-4 border-t flex justify-between items-center px-2">
-                        <span class="text-[10px] font-bold text-stone-400 uppercase">Total</span>
-                        <span id="totalExpense" class="text-xl font-serif italic font-bold">NT$ 0</span>
+                    
+                    <div class="pt-4 border-t border-stone-100 space-y-2">
+                        <div class="flex justify-between items-center px-2">
+                            <span class="text-[10px] font-bold text-stone-400 uppercase">Total (TWD)</span>
+                            <span id="totalExpense" class="text-xl font-serif italic font-bold">NT$ 0</span>
+                        </div>
+                        <div id="currencyBreakdown" class="px-2 space-y-1">
+                            </div>
                     </div>
                 </div>
                 <div id="expenseList" class="space-y-3"></div>
@@ -88,7 +107,7 @@
             <input id="newTripStart" type="date">
             <input id="newTripEnd" type="date">
             <button onclick="createNewTrip()" class="w-full btn-primary py-4 rounded-2xl font-black">START</button>
-            <button onclick="hideCreateModal()" class="w-full text-stone-400 text-xs font-bold">CANCEL</button>
+            <button onclick="hideCreateModal()" class="w-full text-stone-400 text-xs font-bold text-center w-full block">CANCEL</button>
         </div>
     </div>
 
@@ -106,12 +125,14 @@
     </div>
 
     <script>
-        const RATES = { TWD: 1, JPY: 0.21, EUR: 34.5, USD: 32.2 };
-        let allTrips = [];
-        try {
-            allTrips = JSON.parse(localStorage.getItem('TravelMate_V16')) || [];
-        } catch(e) { allTrips = []; }
-        
+        // 設定各幣別對台幣匯率 (大約值)
+        const RATES = { 
+            TWD: 1, JPY: 0.21, KRW: 0.024, USD: 32.5, EUR: 35.2, GBP: 41.2, 
+            AUD: 21.5, CHF: 37.8, CNY: 4.5, HKD: 4.1, THB: 0.9, SGD: 24.2,
+            CZK: 1.4, DKK: 4.7, HUF: 0.09 
+        };
+
+        let allTrips = JSON.parse(localStorage.getItem('TravelMate_V17')) || [];
         let currentTripIndex = null;
         let selectedDayIndex = 0;
         let editingSpotIndex = null;
@@ -167,8 +188,62 @@
             updateTotal();
         }
 
-        function openNav(dest) { event.stopPropagation(); window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dest)}`, '_blank'); }
+        function addExpense() {
+            const amount = parseFloat(document.getElementById('expAmount').value);
+            const curr = document.getElementById('expCurrency').value;
+            const note = document.getElementById('expNote').value;
+            if (amount && note) {
+                allTrips[currentTripIndex].expenses.unshift({ 
+                    amount, curr, note, 
+                    twd: Math.round(amount * (RATES[curr] || 1)) 
+                });
+                document.getElementById('expAmount').value = ''; 
+                document.getElementById('expNote').value = '';
+                saveAll(); renderTripDetail();
+            }
+        }
 
+        function updateTotal() {
+            let totalTWD = 0;
+            let foreignTotals = {}; // 用於存各幣別總和
+            const trip = allTrips[currentTripIndex];
+            const list = document.getElementById('expenseList');
+            
+            list.innerHTML = (trip.expenses || []).map(ex => {
+                totalTWD += ex.twd;
+                // 統計外幣
+                if(ex.curr !== 'TWD') {
+                    foreignTotals[ex.curr] = (foreignTotals[ex.curr] || 0) + ex.amount;
+                }
+
+                return `<div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border border-stone-50">
+                    <p class="font-bold text-stone-700 text-sm flex-1 truncate pr-4">${ex.note}</p>
+                    <div class="text-right">
+                        <p class="text-[9px] text-stone-400 font-mono uppercase">${ex.amount} ${ex.curr}</p>
+                        <p class="text-sm font-black">NT$ ${ex.twd.toLocaleString()}</p>
+                    </div>
+                </div>`;
+            }).join('');
+
+            // 更新台幣總額
+            document.getElementById('totalExpense').innerText = `NT$ ${totalTWD.toLocaleString()}`;
+
+            // 更新外幣統計顯示
+            const breakdown = document.getElementById('currencyBreakdown');
+            const foreignKeys = Object.keys(foreignTotals);
+            if(foreignKeys.length > 0) {
+                breakdown.innerHTML = foreignKeys.map(k => `
+                    <div class="flex justify-between text-[11px] font-mono text-stone-500">
+                        <span>${k} SUB-TOTAL:</span>
+                        <span class="font-bold">${foreignTotals[k].toLocaleString()} ${k}</span>
+                    </div>
+                `).join('');
+            } else {
+                breakdown.innerHTML = '';
+            }
+        }
+
+        function openNav(dest) { event.stopPropagation(); window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dest)}`, '_blank'); }
         async function saveNewSpot() {
             const time = document.getElementById('spotTime').value;
             const name = document.getElementById('spotName').value;
@@ -181,7 +256,6 @@
             }
             saveAll(); hideAddSpotModal(); renderTripDetail();
         }
-
         function editSpot(idx) {
             editingSpotIndex = idx;
             const s = allTrips[currentTripIndex].dailyItinerary[selectedDayIndex].items[idx];
@@ -191,7 +265,6 @@
             document.getElementById('btnDeleteSpot').classList.remove('hidden');
             showAddSpotModal();
         }
-
         function createNewTrip() {
             const name = document.getElementById('newTripName').value;
             const start = document.getElementById('newTripStart').value;
@@ -202,31 +275,6 @@
             allTrips.push({ name, start, end, dailyItinerary: dateArray.map(d=>({date: d, items: []})), expenses: [], notes: "" });
             saveAll(); hideCreateModal(); renderTripList();
         }
-
-        function addExpense() {
-            const amount = parseFloat(document.getElementById('expAmount').value);
-            const curr = document.getElementById('expCurrency').value;
-            const note = document.getElementById('expNote').value;
-            if (amount && note) {
-                allTrips[currentTripIndex].expenses.unshift({ amount, curr, note, twd: Math.round(amount * RATES[curr]) });
-                document.getElementById('expAmount').value = ''; document.getElementById('expNote').value = '';
-                saveAll(); renderTripDetail();
-            }
-        }
-
-        function updateTotal() {
-            let total = 0; const trip = allTrips[currentTripIndex];
-            const list = document.getElementById('expenseList');
-            list.innerHTML = (trip.expenses || []).map(ex => {
-                total += ex.twd;
-                return `<div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border border-stone-50">
-                    <p class="font-bold text-stone-700 text-sm flex-1 truncate pr-4">${ex.note}</p>
-                    <div class="text-right"><p class="text-[9px] text-stone-400 font-mono uppercase">${ex.amount} ${ex.curr}</p><p class="text-sm font-black">NT$ ${ex.twd.toLocaleString()}</p></div>
-                </div>`;
-            }).join('');
-            document.getElementById('totalExpense').innerText = `NT$ ${total.toLocaleString()}`;
-        }
-
         async function fetchWeather() {
             return new Promise(r => {
                 navigator.geolocation.getCurrentPosition(async p => {
@@ -237,8 +285,7 @@
                 }, () => r(""), {timeout: 2000});
             });
         }
-
-        function saveAll() { localStorage.setItem('TravelMate_V16', JSON.stringify(allTrips)); }
+        function saveAll() { localStorage.setItem('TravelMate_V17', JSON.stringify(allTrips)); }
         function goHome() { currentTripIndex = null; document.getElementById('view-home').classList.remove('hidden'); document.getElementById('view-detail').classList.add('hidden'); renderTripList(); }
         function showCreateModal() { document.getElementById('modal-create').classList.remove('hidden'); }
         function hideCreateModal() { document.getElementById('modal-create').classList.add('hidden'); }
