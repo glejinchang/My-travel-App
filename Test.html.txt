@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelMate - 你的旅遊夥伴</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); }
+    </style>
+</head>
+<body class="bg-gray-50 pb-24">
+
+    <header class="bg-blue-600 text-white p-6 rounded-b-3xl shadow-lg">
+        <h1 class="text-2xl font-bold">東京櫻花祭 🌸</h1>
+        <p class="text-blue-100 opacity-80">2026-04-01 ~ 2026-04-05</p>
+    </header>
+
+    <main class="p-4 space-y-6">
+        
+        <section class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h3 class="text-gray-500 text-sm">當前位置天氣</h3>
+                    <p class="text-xl font-semibold">東京都 淺草</p>
+                </div>
+                <div class="text-right">
+                    <i class="fas fa-cloud-sun text-yellow-400 text-3xl"></i>
+                    <p class="text-lg font-bold">22°C</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-lg font-bold mb-3 flex items-center">
+                <i class="far fa-calendar-alt mr-2 text-blue-500"></i> Day 1 行程
+            </h2>
+            <div class="space-y-4">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 border-blue-500 flex justify-between items-start">
+                    <div>
+                        <span class="text-xs font-bold text-blue-500 bg-blue-50 px-2 py-1 rounded">10:00</span>
+                        <h3 class="font-bold text-gray-800 mt-1">淺草寺雷門</h3>
+                        <p class="text-sm text-gray-500 mt-1"><i class="far fa-sticky-note mr-1"></i> 買人形燒、抽籤</p>
+                    </div>
+                    <button onclick="window.open('https://www.google.com/maps/search/?api=1&query=淺草寺')" 
+                            class="bg-blue-500 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md">
+                        <i class="fas fa-location-arrow"></i>
+                    </button>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 border-emerald-500 flex justify-between items-start">
+                    <div>
+                        <span class="text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded">13:00</span>
+                        <h3 class="font-bold text-gray-800 mt-1">晴空塔</h3>
+                        <p class="text-sm text-gray-500 mt-1"><i class="fas fa-heart text-pink-400 mr-1"></i> 心情：風景超棒！</p>
+                    </div>
+                    <button onclick="window.open('https://www.google.com/maps/search/?api=1&query=晴空塔')" 
+                            class="bg-blue-500 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md">
+                        <i class="fas fa-location-arrow"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-gray-800 text-white p-5 rounded-2xl">
+            <h3 class="text-sm opacity-70">本日支出 (JPY 轉 TWD)</h3>
+            <div class="flex justify-between items-end mt-2">
+                <span class="text-2xl font-mono">¥ 12,500</span>
+                <span class="text-xl text-emerald-400">≈ NT$ 2,625</span>
+            </div>
+        </section>
+
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around p-3 safe-area-bottom shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+        <button class="flex flex-col items-center text-blue-600">
+            <i class="fas fa-map-marked-alt text-xl"></i>
+            <span class="text-xs mt-1 font-medium">行程</span>
+        </button>
+        <button class="flex flex-col items-center text-gray-400">
+            <i class="fas fa-wallet text-xl"></i>
+            <span class="text-xs mt-1 font-medium">記帳</span>
+        </button>
+        <button class="flex flex-col items-center text-gray-400">
+            <i class="fas fa-pen-fancy text-xl"></i>
+            <span class="text-xs mt-1 font-medium">日記</span>
+        </button>
+        <button class="flex flex-col items-center text-gray-400">
+            <i class="fas fa-cog text-xl"></i>
+            <span class="text-xs mt-1 font-medium">設定</span>
+        </button>
+    </nav>
+
+</body>
+</html>
