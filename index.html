@@ -246,4 +246,52 @@
             allTrips.push({ name, start, end, dailyItinerary: dateArray.map(d => ({date: d, items: []})), expenses: [], notes: "" });
             saveAll(); hideCreateModal(); renderTripList();
         }
-        function showDetail(index) { currentTripIndex
+        function showDetail(index) { currentTripIndex = index; document.getElementById('view-home').classList.add('hidden'); document.getElementById('view-detail').classList.remove('hidden'); renderTripDetail(); }
+        function addExpense() {
+            const amount = parseFloat(document.getElementById('expAmount').value);
+            const curr = document.getElementById('expCurrency').value;
+            const note = document.getElementById('expNote').value;
+            if (amount && note) {
+                allTrips[currentTripIndex].expenses.unshift({ amount, curr, note, twd: Math.round(amount * RATES[curr]) });
+                document.getElementById('expAmount').value = ''; document.getElementById('expNote').value = '';
+                saveAll(); renderTripDetail();
+            }
+        }
+        function updateTotal() {
+            let total = 0;
+            const trip = allTrips[currentTripIndex];
+            const exList = document.getElementById('expenseList');
+            exList.innerHTML = trip.expenses.map(ex => {
+                total += ex.twd;
+                return `<div class="bg-white p-6 rounded-[1.5rem] flex justify-between items-center shadow-sm">
+                    <div><p class="font-black text-stone-700 text-base">${ex.note}</p><p class="text-[10px] text-stone-300 mt-1">${ex.amount} ${ex.curr}</p></div>
+                    <span class="font-serif italic text-stone-800 text-xl font-bold">NT$ ${ex.twd}</span>
+                </div>`;
+            }).join('');
+            document.getElementById('totalExpense').innerText = `NT$ ${total.toLocaleString()}`;
+        }
+        function exportTripData() {
+            const trip = allTrips[currentTripIndex];
+            let text = `☕️ JOURNEY: ${trip.name}\n\n`;
+            trip.dailyItinerary.forEach(day => {
+                text += `[ ${day.date} ]\n`;
+                day.items.forEach(i => text += `• ${i.time} ${i.name}\n`);
+                text += `\n`;
+            });
+            navigator.clipboard.writeText(text).then(() => alert("COPIED"));
+        }
+        async function fetchWeather() {
+            return new Promise(r => {
+                navigator.geolocation.getCurrentPosition(async p => {
+                    try {
+                        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.coords.latitude}&longitude=${p.coords.longitude}&current_weather=true`);
+                        const d = await res.json(); r(`${Math.round(d.current_weather.temperature)}°C`);
+                    } catch { r(""); }
+                }, () => r(""), {timeout: 2000});
+            });
+        }
+        function deleteCurrentTrip() { if(confirm("DELETE TRIP?")) { allTrips.splice(currentTripIndex, 1); saveAll(); goHome(); } }
+        window.onload = renderTripList;
+    </script>
+</body>
+</html>
